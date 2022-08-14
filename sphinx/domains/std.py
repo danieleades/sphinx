@@ -291,9 +291,15 @@ def split_term_classifiers(line: str) -> List[Optional[str]]:
     return parts
 
 
-def make_glossary_term(env: "BuildEnvironment", textnodes: Iterable[Node], index_key: str,
-                       source: str, lineno: int, node_id: str, document: nodes.document
-                       ) -> nodes.term:
+def make_glossary_term(
+    env: "BuildEnvironment",
+    textnodes: Iterable[Node],
+    index_key: str,
+    source: str,
+    lineno: int,
+    node_id: Optional[str],
+    document: nodes.document
+) -> nodes.term:
     # get a text-only representation of the term and register it
     # as a cross-reference target
     term = nodes.term('', '', *textnodes)

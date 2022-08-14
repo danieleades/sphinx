@@ -98,7 +98,7 @@ class _TranslationProxy(UserString):
 translators: Dict[Tuple[str, str], NullTranslations] = defaultdict(NullTranslations)
 
 
-def init(locale_dirs: List[Optional[str]], language: Optional[str],
+def init(locale_dirs: Iterable[Optional[str]], language: Optional[str],
          catalog: str = 'sphinx', namespace: str = 'general') -> Tuple[NullTranslations, bool]:
     """Look for message catalogs in `locale_dirs` and *ensure* that there is at
     least a NullTranslations catalog set in `translators`. If called multiple
