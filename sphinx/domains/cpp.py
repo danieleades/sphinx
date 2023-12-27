@@ -5216,7 +5216,7 @@ class Symbol:
 
     def dump(self, indent: int) -> str:
         res = [self.to_string(indent)]
-        res.extend(c.dump(indent + 1) for c in children)
+        res.extend(c.dump(indent + 1) for c in self._children)
         return ''.join(res)
 
 
