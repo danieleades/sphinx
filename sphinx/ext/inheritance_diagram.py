@@ -133,7 +133,7 @@ def import_classes(name: str, currmodule: str) -> Any:
         ]
         return classes
     raise InheritanceException(
-        "%r specified for inheritance diagram is " "not a class or module" % name
+        "%r specified for inheritance diagram is " "not a class or module" % name,
     )
 
 
@@ -166,7 +166,7 @@ class InheritanceGraph:
         self.class_names = class_names
         classes = self._import_classes(class_names, currmodule)
         self.class_info = self._class_info(
-            classes, show_builtins, private_bases, parts, aliases, top_classes
+            classes, show_builtins, private_bases, parts, aliases, top_classes,
         )
         if not self.class_info:
             msg = "No classes found for inheritance diagram"
@@ -439,7 +439,7 @@ def get_graph_hash(node: inheritance_diagram) -> str:
 
 
 def html_visit_inheritance_diagram(
-    self: HTML5Translator, node: inheritance_diagram
+    self: HTML5Translator, node: inheritance_diagram,
 ) -> None:
     """
     Output the graph for HTML.  This will insert a PNG with clickable
@@ -453,7 +453,7 @@ def html_visit_inheritance_diagram(
     # Create a mapping from fully-qualified class names to URLs.
     graphviz_output_format = self.builder.env.config.graphviz_output_format.upper()
     current_filename = path.basename(
-        self.builder.current_docname + self.builder.out_suffix
+        self.builder.current_docname + self.builder.out_suffix,
     )
     urls = {}
     pending_xrefs = cast(Iterable[addnodes.pending_xref], node)
@@ -486,7 +486,7 @@ def html_visit_inheritance_diagram(
 
 
 def latex_visit_inheritance_diagram(
-    self: LaTeXTranslator, node: inheritance_diagram
+    self: LaTeXTranslator, node: inheritance_diagram,
 ) -> None:
     """
     Output the graph for LaTeX.  This will insert a PDF.
@@ -497,7 +497,7 @@ def latex_visit_inheritance_diagram(
     name = "inheritance%s" % graph_hash
 
     dotcode = graph.generate_dot(
-        name, env=self.builder.env, graph_attrs={"size": '"6.0,6.0"'}
+        name, env=self.builder.env, graph_attrs={"size": '"6.0,6.0"'},
     )
     render_dot_latex(self, node, dotcode, {}, "inheritance")
     raise nodes.SkipNode
@@ -516,7 +516,7 @@ def texinfo_visit_inheritance_diagram(
     name = "inheritance%s" % graph_hash
 
     dotcode = graph.generate_dot(
-        name, env=self.builder.env, graph_attrs={"size": '"6.0,6.0"'}
+        name, env=self.builder.env, graph_attrs={"size": '"6.0,6.0"'},
     )
     render_dot_texinfo(self, node, dotcode, {}, "inheritance")
     raise nodes.SkipNode

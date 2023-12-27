@@ -1189,11 +1189,12 @@ class ASTPostfixCallExpr(ASTPostfixOp):
         return transform(self.lst)
 
     def get_id(self, idPrefix: str, version: int) -> str:
-        res = ['cl', idPrefix]
-        for e in self.lst.exprs:
-            res.append(e.get_id(version))
-        res.append('E')
-        return ''.join(res)
+        return ''.join([
+            'cl',
+            idPrefix,
+            *(e.get_id(version) for e in self.lst.exprs),
+            'E',
+        ])
 
     def describe_signature(self, signode: TextElement, mode: str,
                            env: BuildEnvironment, symbol: Symbol) -> None:
@@ -2559,8 +2560,7 @@ class ASTDeclaratorNameParamQual(ASTDeclarator):
         res = []
         if self.declId:
             res.append(transform(self.declId))
-        for op in self.arrayOps:
-            res.append(transform(op))
+        res.extend(transform(op) for op in self.arrayOps)
         if self.paramQual:
             res.append(transform(self.paramQual))
         return ''.join(res)
@@ -3901,26 +3901,26 @@ class ASTTemplateIntroduction(ASTBase):
     def get_id(self, version: int) -> str:
         assert version >= 2
         # first do the same as a normal template parameter list
-        res = []
-        res.append("I")
-        res.extend(param.get_id(version) for param in self.params)
-        res.append("E")
-        # let's use X expr E, which is otherwise for constant template args
-        res.append("X")
-        res.append(self.concept.get_id(version))
-        res.append("I")
-        res.extend(param.get_id_as_arg(version) for param in self.params)
-        res.append("E")
-        res.append("E")
-        return ''.join(res)
+        return ''.join([
+            "I",
+            *(param.get_id(version) for param in self.params),
+            "E",
+            # let's use X expr E, which is otherwise for constant template args
+            "X",
+            self.concept.get_id(version),
+            "I",
+            *(param.get_id_as_arg(version) for param in self.params),
+            "E",
+            "E",
+        ])
 
     def _stringify(self, transform: StringifyTransform) -> str:
-        res = []
-        res.append(transform(self.concept))
-        res.append('{')
-        res.append(', '.join(transform(param) for param in self.params))
-        res.append('} ')
-        return ''.join(res)
+        return ''.join([
+            transform(self.concept),
+            '{',
+            ', '.join(transform(param) for param in self.params),
+            '} ',
+        ])
 
     def describe_signature_as_introducer(
             self, parentNode: desc_signature, mode: str,
@@ -3970,10 +3970,9 @@ class ASTTemplateDeclarationPrefix(ASTBase):
         return ''.join(res)
 
     def _stringify(self, transform: StringifyTransform) -> str:
-        res = []
-        for t in self.templates:
-            res.append(transform(t))
-        return ''.join(res)
+        return ''.join(
+            transform(t) for t in self.templates
+        )
 
     def describe_signature(self, signode: desc_signature, mode: str,
                            env: BuildEnvironment, symbol: Symbol, lineSpec: bool) -> None:
