@@ -123,10 +123,11 @@ def import_classes(name: str, currmodule: str) -> Any:
         return [target]
     elif inspect.ismodule(target):
         # If imported object is a module, return classes defined on it
-        classes = []
-        for cls in target.__dict__.values():
-            if inspect.isclass(cls) and cls.__module__ == target.__name__:
-                classes.append(cls)
+        classes = [
+            cls
+            for cls in target.__dict__.values()
+            if inspect.isclass(cls) and cls.__module__ == target.__name__
+        ]
         return classes
     raise InheritanceException('%r specified for inheritance diagram is '
                                'not a class or module' % name)
@@ -325,10 +326,12 @@ class InheritanceGraph:
                        (name, self._format_node_attrs(this_node_attrs)))
 
             # Write the edges
-            for base_name in bases:
-                res.append('  "%s" -> "%s" [%s];\n' %
+            res.extend(
+                '  "%s" -> "%s" [%s];\n' %
                            (base_name, name,
-                            self._format_node_attrs(e_attrs)))
+                            self._format_node_attrs(e_attrs))
+                for base_name in bases
+            )
         res.append('}\n')
         return ''.join(res)
 

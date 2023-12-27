@@ -452,8 +452,7 @@ class ASTPostfixExpr(ASTExpression):
 
     def _stringify(self, transform: StringifyTransform) -> str:
         res = [transform(self.prefix)]
-        for p in self.postFixes:
-            res.append(transform(p))
+        res.extend(transform(p) for p in self.postFixes)
         return ''.join(res)
 
     def describe_signature(self, signode: TextElement, mode: str,
@@ -1707,9 +1706,7 @@ class Symbol:
             symbols.append(s)
             s = s.parent
         symbols.reverse()
-        names = []
-        for s in symbols:
-            names.append(s.ident)
+        names = [s.ident for s in symbols]
         return ASTNestedName(names, rooted=False)
 
     def _find_first_named_symbol(self, ident: ASTIdentifier,

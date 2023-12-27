@@ -753,8 +753,7 @@ class ASTNestedName(ASTBase):
         if len(self.names) > 1 or len(modifiers) > 0:
             res.append('N')
         res.append(modifiers)
-        for n in self.names:
-            res.append(n.get_id(version))
+        res.extend(n.get_id(version) for n in self.names)
         if len(self.names) > 1 or len(modifiers) > 0:
             res.append('E')
         return ''.join(res)
@@ -1563,12 +1562,12 @@ class ASTConditionalExpr(ASTExpression):
 
     def get_id(self, version: int) -> str:
         assert version >= 2
-        res = []
-        res.append(_id_operator_v2['?'])
-        res.append(self.ifExpr.get_id(version))
-        res.append(self.thenExpr.get_id(version))
-        res.append(self.elseExpr.get_id(version))
-        return ''.join(res)
+        return ''.join([
+            _id_operator_v2['?'],
+            self.ifExpr.get_id(version),
+            self.thenExpr.get_id(version),
+            self.elseExpr.get_id(version),
+        ])
 
     def describe_signature(self, signode: TextElement, mode: str,
                            env: BuildEnvironment, symbol: Symbol) -> None:
@@ -3768,11 +3767,11 @@ class ASTTemplateParams(ASTBase):
 
     def get_id(self, version: int, excludeRequires: bool = False) -> str:
         assert version >= 2
-        res = []
-        res.append("I")
-        for param in self.params:
-            res.append(param.get_id(version))
-        res.append("E")
+        res = [
+            "I",
+            *(param.get_id(version) for param in self.params),
+            "E",
+        ]
         if not excludeRequires and self.requiresClause:
             res.append('IQ')
             res.append(self.requiresClause.expr.get_id(version))
@@ -3904,15 +3903,13 @@ class ASTTemplateIntroduction(ASTBase):
         # first do the same as a normal template parameter list
         res = []
         res.append("I")
-        for param in self.params:
-            res.append(param.get_id(version))
+        res.extend(param.get_id(version) for param in self.params)
         res.append("E")
         # let's use X expr E, which is otherwise for constant template args
         res.append("X")
         res.append(self.concept.get_id(version))
         res.append("I")
-        for param in self.params:
-            res.append(param.get_id_as_arg(version))
+        res.extend(param.get_id_as_arg(version) for param in self.params)
         res.append("E")
         res.append("E")
         return ''.join(res)
@@ -5219,8 +5216,7 @@ class Symbol:
 
     def dump(self, indent: int) -> str:
         res = [self.to_string(indent)]
-        for c in self._children:
-            res.append(c.dump(indent + 1))
+        res.extend(c.dump(indent + 1) for c in children)
         return ''.join(res)
 
 
@@ -7071,10 +7067,10 @@ class DefinitionParser(BaseParser):
                     msg += "%s\n\t" % templatePrefix
                 msg += str(nestedName)
                 self.warn(msg)
-
-            newTemplates: list[ASTTemplateParams | ASTTemplateIntroduction] = []
-            for _i in range(numExtra):
-                newTemplates.append(ASTTemplateParams([], requiresClause=None))
+            newTemplates: list[ASTTemplateParams | ASTTemplateIntroduction] = [
+                ASTTemplateParams([], requiresClause=None)
+                for _i in range(numExtra)
+            ]
             if templatePrefix and not isMemberInstantiation:
                 newTemplates.extend(templatePrefix.templates)
             templatePrefix = ASTTemplateDeclarationPrefix(newTemplates)

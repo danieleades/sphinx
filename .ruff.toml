@@ -209,8 +209,7 @@ select = [
       # Numpy is not used in Sphinx
     # pandas-vet ('PD')
       # Pandas is not used in Sphinx
-    # perflint ('PERF')
-      # NOT YET USED
+    "PERF",  # perflint ('PERF')
     # pygrep-hooks ('PGH')
     "PGH001",  # No builtin `eval()` allowed
     "PGH002",  # `warn` is deprecated in favor of `warning`
