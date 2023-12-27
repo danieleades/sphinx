@@ -118,7 +118,7 @@ def import_classes(name: str, currmodule: str) -> Any:
     if target is None:
         raise InheritanceException(
             "Could not import class or module %r specified for "
-            "inheritance diagram" % name
+            "inheritance diagram" % name,
         )
 
     if inspect.isclass(target):
@@ -347,7 +347,7 @@ class InheritanceGraph:
             if tooltip:
                 this_node_attrs["tooltip"] = tooltip
             res.append(
-                '  "%s" [%s];\n' % (name, self._format_node_attrs(this_node_attrs))
+                '  "%s" [%s];\n' % (name, self._format_node_attrs(this_node_attrs)),
             )
 
             # Write the edges

@@ -18,6 +18,7 @@ ignore = [
     # pycodestyle
     "E741",  # Ambiguous variable name: `{name}`
     # pylint
+    "PERF203",  # `try`-`except` within a loop incurs performance overhead
     "PLC1901",  # simplify truthy/falsey string comparisons
 ]
 external = [  # Whitelist for RUF100 unknown code warnings
