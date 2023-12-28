@@ -153,8 +153,7 @@ def test_get_items_summary(make_app, app_params):
 
     def new_get_items(self, names, *args, **kwargs):
         results = orig_get_items(self, names, *args, **kwargs)
-        for name, result in zip(names, results):
-            autosummary_items[name] = result
+        autosummary_items.update(dict(zip(names, results)))
         return results
 
     def handler(app, what, name, obj, options, lines):

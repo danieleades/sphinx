@@ -287,14 +287,12 @@ class BaseParser:
         logger.debug(f"{msg}\n{self.definition}\n{indicator}")  # NoQA: G004
 
     def fail(self, msg: str) -> None:
-        errors = []
         indicator = '-' * self.pos + '^'
         exMain = DefinitionError(
             'Invalid %s declaration: %s [error at %d]\n  %s\n  %s' %
             (self.language, msg, self.pos, self.definition, indicator))
-        errors.append((exMain, "Main error"))
-        for err in self.otherErrors:
-            errors.append((err, "Potential other error"))
+        errors = [(exMain, "Main error")]
+        errors.extend((err, "Potential other error") for err in self.otherErrors)
         self.otherErrors = []
         raise self._make_multi_error(errors, '')
 

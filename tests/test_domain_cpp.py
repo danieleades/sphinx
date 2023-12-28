@@ -103,8 +103,10 @@ def _check(name, input, idDict, output, key, asTextOutput):
             idActual.append(None)
 
     res = [True]
-    for i in range(1, _max_id + 1):
-        res.append(idExpected[i] == idActual[i])
+    res.extend(
+        idExpected[i] == idActual[i]
+        for i in range(1, _max_id + 1)
+    )
 
     if not all(res):
         print("input:    %s" % input.rjust(20))

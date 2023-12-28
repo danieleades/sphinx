@@ -452,8 +452,7 @@ class ASTPostfixExpr(ASTExpression):
 
     def _stringify(self, transform: StringifyTransform) -> str:
         res = [transform(self.prefix)]
-        for p in self.postFixes:
-            res.append(transform(p))
+        res.extend(transform(p) for p in self.postFixes)
         return ''.join(res)
 
     def describe_signature(self, signode: TextElement, mode: str,
@@ -983,8 +982,7 @@ class ASTDeclaratorNameParam(ASTDeclarator):
         res = []
         if self.declId:
             res.append(transform(self.declId))
-        for op in self.arrayOps:
-            res.append(transform(op))
+        res.extend(transform(op) for op in self.arrayOps)
         if self.param:
             res.append(transform(self.param))
         return ''.join(res)
@@ -1707,9 +1705,7 @@ class Symbol:
             symbols.append(s)
             s = s.parent
         symbols.reverse()
-        names = []
-        for s in symbols:
-            names.append(s.ident)
+        names = [s.ident for s in symbols]
         return ASTNestedName(names, rooted=False)
 
     def _find_first_named_symbol(self, ident: ASTIdentifier,
@@ -2187,10 +2183,10 @@ class Symbol:
         return ''.join(res)
 
     def dump(self, indent: int) -> str:
-        res = [self.to_string(indent)]
-        for c in self._children:
-            res.append(c.dump(indent + 1))
-        return ''.join(res)
+        return ''.join([
+            self.to_string(indent),
+            *(c.dump(indent + 1) for c in self._children),
+        ])
 
 
 class DefinitionParser(BaseParser):

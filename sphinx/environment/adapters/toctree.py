@@ -75,9 +75,8 @@ def global_toctree_for_doc(
     This gives the global ToC, with all ancestors and their siblings.
     """
 
-    toctrees: list[Element] = []
-    for toctree_node in env.master_doctree.findall(addnodes.toctree):
-        if toctree := _resolve_toctree(
+    toctrees = [
+        t for t in (_resolve_toctree(
             env,
             docname,
             builder,
@@ -87,8 +86,11 @@ def global_toctree_for_doc(
             titles_only=titles_only,
             collapse=collapse,
             includehidden=includehidden,
-        ):
-            toctrees.append(toctree)
+        )
+            for toctree_node in env.master_doctree.findall(addnodes.toctree)
+        )
+        if t is not None
+    ]
     if not toctrees:
         return None
     result = toctrees[0]
