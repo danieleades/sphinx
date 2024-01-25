@@ -1214,7 +1214,7 @@ def test_domain_cpp_build_with_add_function_parentheses_is_True(app, status, war
     app.build(force_all=True)
 
     def check(spec, text, file):
-        pattern = '<li><p>%s<a .*?><code .*?><span .*?>%s</span></code></a></p></li>' % spec
+        pattern = '<li><p>{}<a .*?><code .*?><span .*?>{}</span></code></a></p></li>'.format(*spec)
         res = re.search(pattern, text)
         if not res:
             print(f"Pattern\n\t{pattern}\nnot found in {file}")
@@ -1255,7 +1255,7 @@ def test_domain_cpp_build_with_add_function_parentheses_is_False(app, status, wa
     app.build(force_all=True)
 
     def check(spec, text, file):
-        pattern = '<li><p>%s<a .*?><code .*?><span .*?>%s</span></code></a></p></li>' % spec
+        pattern = '<li><p>{}<a .*?><code .*?><span .*?>{}</span></code></a></p></li>'.format(*spec)
         res = re.search(pattern, text)
         if not res:
             print(f"Pattern\n\t{pattern}\nnot found in {file}")
