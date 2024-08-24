@@ -10,6 +10,7 @@ import itertools
 import operator
 import re
 import tokenize
+from dataclasses import dataclass
 from inspect import Signature
 from token import DEDENT, INDENT, NAME, NEWLINE, NUMBER, OP, STRING
 from tokenize import COMMENT, NL
@@ -80,28 +81,18 @@ def get_lvar_names(node: ast.AST, self: ast.arg | None = None) -> list[str]:
 
 def dedent_docstring(s: str) -> str:
     """Remove common leading indentation from docstring."""
-    def dummy() -> None:
-        # dummy function to mock `inspect.getdoc`.
-        pass
-
-    dummy.__doc__ = s
-    docstring = inspect.getdoc(dummy)
-    if docstring:
-        return docstring.lstrip("\r\n").rstrip("\r\n")
-    else:
-        return ""
+    return textwrap.dedent(s).strip()
 
 
+@dataclass
 class Token:
     """Better token wrapper for tokenize module."""
 
-    def __init__(self, kind: int, value: Any, start: tuple[int, int], end: tuple[int, int],
-                 source: str) -> None:
-        self.kind = kind
-        self.value = value
-        self.start = start
-        self.end = end
-        self.source = source
+    kind: int
+    value: Any
+    start: tuple[int, int]
+    end: tuple[int, int]
+    source: str
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, int):
