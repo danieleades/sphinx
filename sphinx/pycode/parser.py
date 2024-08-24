@@ -5,18 +5,20 @@ from __future__ import annotations
 import ast
 import contextlib
 import functools
-import inspect
 import itertools
 import operator
 import re
+import textwrap
 import tokenize
 from dataclasses import dataclass
-from inspect import Signature
 from token import DEDENT, INDENT, NAME, NEWLINE, NUMBER, OP, STRING
 from tokenize import COMMENT, NL
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sphinx.pycode.ast import unparse as ast_unparse
+
+if TYPE_CHECKING:
+    from inspect import Signature
 
 comment_re = re.compile('^\\s*#: ?(.*)\r?\n?$')
 indent_re = re.compile('^\\s*$')
