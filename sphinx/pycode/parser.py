@@ -10,6 +10,7 @@ import itertools
 import operator
 import re
 import tokenize
+from dataclasses import dataclass
 from inspect import Signature
 from token import DEDENT, INDENT, NAME, NEWLINE, NUMBER, OP, STRING
 from tokenize import COMMENT, NL
@@ -92,16 +93,15 @@ def dedent_docstring(s: str) -> str:
         return ""
 
 
+@dataclass
 class Token:
     """Better token wrapper for tokenize module."""
 
-    def __init__(self, kind: int, value: Any, start: tuple[int, int], end: tuple[int, int],
-                 source: str) -> None:
-        self.kind = kind
-        self.value = value
-        self.start = start
-        self.end = end
-        self.source = source
+    kind: int
+    value: Any
+    start: tuple[int, int]
+    end: tuple[int, int]
+    source: str
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, int):
